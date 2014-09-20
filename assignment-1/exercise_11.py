@@ -13,8 +13,6 @@ def sample_gaussian(f, mean, std, x):
 def plot():
 	x_training = np.linspace(0, 1, 10)
 	y_training = sample_gaussian(f, 0, 0.3, x_training)
-	x_test = np.linspace(0, 1, 100)
-	y_test = sample_gaussian(f, 0, 0.3, y_training)
 
 	x_real = np.linspace(0, 1, 1000)
 	y_real = [f(x_sample) for x_sample in x_real]
