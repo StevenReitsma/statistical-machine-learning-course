@@ -20,7 +20,7 @@ def eval_polynomial(w, x):
 	return np.sum([w[i]*(x**i) for i in np.arange(0, np.size(w))])
 
 def run_on_data():
-	x_training = np.linspace(0, 1, 10)
+	x_training = np.linspace(0, 1, 40)
 	y_training = exercise_11.sample_gaussian(exercise_11.f, 0, 0.3, x_training)
 	# Cringe
 	weights0 = PolCurFit(zip(x_training, y_training), 0)
@@ -58,7 +58,7 @@ def plot(weights_vector):
 	ax.set_ylabel('y')
 	ax.set_title('Polynomial approximation of sine function')
 
-	fig.savefig('exercise13.png')
+	fig.savefig('exercise1342.png')
 
 def plot_rmse(y_training, weights_vector):
 	x_test = np.linspace(0, 1, 100)
@@ -69,7 +69,7 @@ def plot_rmse(y_training, weights_vector):
 	i = 0
 	for weights in weights_vector:
 		poly_output_100 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 100)]
-		poly_output_10 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 10)]
+		poly_output_10 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 40)]
 		rmse_training[i] = np.sqrt(np.mean((poly_output_10 - y_training)**2))
 		rmse_test[i] = np.sqrt(np.mean((poly_output_100 - y_test)**2))
 		i = i + 1
@@ -83,6 +83,6 @@ def plot_rmse(y_training, weights_vector):
 	ax.set_ylabel('RMSE')
 	ax.set_title('RMSE for the polynomial approximation of sine function')
 
-	fig.savefig('exercise132.png')
+	fig.savefig('exercise134.png')
 
 run_on_data()
