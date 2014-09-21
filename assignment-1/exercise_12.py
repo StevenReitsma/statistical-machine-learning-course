@@ -9,9 +9,12 @@ def A(i, j, inpt):
 def T(i, inpt):
 	return np.sum([x[1] * (x[0]**i) for x in inpt])
 
-def PolCurFit(inpt, order):
+def PolCurFit(inpt, order, labda = 0):
 	order = order + 1
 	A_matrix = np.array([[A(i, j, inpt) for j in np.arange(order)] for i in np.arange(order)])
+
+	# Regularize
+	A_matrix = A_matrix + labda * np.identity(np.size(A_matrix, 0))
 	T_vector = np.array([T(i, inpt) for i in np.arange(order)])
 
 	return np.linalg.solve(A_matrix, T_vector)
@@ -23,16 +26,16 @@ def run_on_data():
 	x_training = np.linspace(0, 1, 40)
 	y_training = exercise_11.sample_gaussian(exercise_11.f, 0, 0.3, x_training)
 	# Cringe
-	weights0 = PolCurFit(zip(x_training, y_training), 0)
-	weights1 = PolCurFit(zip(x_training, y_training), 1)
-	weights2 = PolCurFit(zip(x_training, y_training), 2)
-	weights3 = PolCurFit(zip(x_training, y_training), 3)
-	weights4 = PolCurFit(zip(x_training, y_training), 4)
-	weights5 = PolCurFit(zip(x_training, y_training), 5)
-	weights6 = PolCurFit(zip(x_training, y_training), 6)
-	weights7 = PolCurFit(zip(x_training, y_training), 7)
-	weights8 = PolCurFit(zip(x_training, y_training), 8)
-	weights9 = PolCurFit(zip(x_training, y_training), 9)
+	weights0 = PolCurFit(zip(x_training, y_training), 0, labda=10**-6)
+	weights1 = PolCurFit(zip(x_training, y_training), 1, labda=10**-6)
+	weights2 = PolCurFit(zip(x_training, y_training), 2, labda=10**-6)
+	weights3 = PolCurFit(zip(x_training, y_training), 3, labda=10**-6)
+	weights4 = PolCurFit(zip(x_training, y_training), 4, labda=10**-6)
+	weights5 = PolCurFit(zip(x_training, y_training), 5, labda=10**-6)
+	weights6 = PolCurFit(zip(x_training, y_training), 6, labda=10**-6)
+	weights7 = PolCurFit(zip(x_training, y_training), 7, labda=10**-6)
+	weights8 = PolCurFit(zip(x_training, y_training), 8, labda=10**-6)
+	weights9 = PolCurFit(zip(x_training, y_training), 9, labda=10**-6)
 
 	plot([weights0, weights1, weights3, weights9])
 	plot_rmse(y_training, [weights0, weights1, weights2, weights3, weights4, weights5, weights6, weights7, weights8, weights9])
@@ -58,7 +61,7 @@ def plot(weights_vector):
 	ax.set_ylabel('y')
 	ax.set_title('Polynomial approximation of sine function')
 
-	fig.savefig('exercise1342.png')
+	fig.savefig('exercise1352.png')
 
 def plot_rmse(y_training, weights_vector):
 	x_test = np.linspace(0, 1, 100)
@@ -83,6 +86,6 @@ def plot_rmse(y_training, weights_vector):
 	ax.set_ylabel('RMSE')
 	ax.set_title('RMSE for the polynomial approximation of sine function')
 
-	fig.savefig('exercise134.png')
+	fig.savefig('exercise135.png')
 
 run_on_data()
