@@ -3,12 +3,15 @@ import matplotlib.pyplot as plt
 from mpltools import style
 style.use('ggplot')
 
+# The derivative to x.
 def rule_x(x, y):
 	return 2*(200*x**3 - 200*x*y + x - 1)
 
+# The derivative to y.
 def rule_y(x, y):
 	return 200*(y - x**2)
 
+# Performs gradient descent and plots the trajectory on a contour color mesh.
 def gradient_descent(x_init, y_init, eta):
 	x = x_init
 	y = y_init
@@ -22,10 +25,12 @@ def gradient_descent(x_init, y_init, eta):
 	point_list = []
 	point_list.append((x, y))
 
+	# While we have not yet converged.
 	while first or np.abs(x_prev - x) > 10**-20 or np.abs(y_prev - y) > 10**-20:
 		x_prev = x
 		y_prev = y
 
+		# Gradient descent rules.
 		x = x - eta * rule_x(x, y)
 		y = x - eta * rule_y(x, y)
 
@@ -40,6 +45,7 @@ def gradient_descent(x_init, y_init, eta):
 
 	plot_trajectory(point_list)
 
+# Plots the gradient descent trajectory on a contour color mesh.
 def plot_trajectory(point_list):
 	fig, ax = plt.subplots(1)
 

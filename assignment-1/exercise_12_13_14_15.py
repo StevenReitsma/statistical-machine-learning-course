@@ -3,47 +3,53 @@ import prettyplotlib as ppl
 import matplotlib.pyplot as plt
 import exercise_11
 
+# The definition of the A-matrix
 def A(i, j, inpt):
 	return np.sum([x[0]**(i+j) for x in inpt])
 
+# The definition of the T-vector
 def T(i, inpt):
 	return np.sum([x[1] * (x[0]**i) for x in inpt])
 
+# Returns weights for the optimal polynomial curve fit.
 def PolCurFit(inpt, order, labda = 0):
 	order = order + 1
+	
+	# Build the A-matrix
 	A_matrix = np.array([[A(i, j, inpt) for j in np.arange(order)] for i in np.arange(order)])
 
-	# Regularize
+	# Regularize, which is as simple as adding the lambda term to the A_matrix diagonal
 	A_matrix = A_matrix + labda * np.identity(np.size(A_matrix, 0))
+	
+	# Build the T-vector
 	T_vector = np.array([T(i, inpt) for i in np.arange(order)])
 
+	# Solve the linear system
 	return np.linalg.solve(A_matrix, T_vector)
 
+# Returns y(x; w). x is scalar, w is a vector.
 def eval_polynomial(w, x):
 	return np.sum([w[i]*(x**i) for i in np.arange(0, np.size(w))])
 
 def run_on_data():
 	x_training = np.linspace(0, 1, 40)
 	y_training = exercise_11.sample_gaussian(exercise_11.f, 0, 0.3, x_training)
-	# Cringe
-	weights0 = PolCurFit(zip(x_training, y_training), 0, labda=10**-6)
-	weights1 = PolCurFit(zip(x_training, y_training), 1, labda=10**-6)
-	weights2 = PolCurFit(zip(x_training, y_training), 2, labda=10**-6)
-	weights3 = PolCurFit(zip(x_training, y_training), 3, labda=10**-6)
-	weights4 = PolCurFit(zip(x_training, y_training), 4, labda=10**-6)
-	weights5 = PolCurFit(zip(x_training, y_training), 5, labda=10**-6)
-	weights6 = PolCurFit(zip(x_training, y_training), 6, labda=10**-6)
-	weights7 = PolCurFit(zip(x_training, y_training), 7, labda=10**-6)
-	weights8 = PolCurFit(zip(x_training, y_training), 8, labda=10**-6)
-	weights9 = PolCurFit(zip(x_training, y_training), 9, labda=10**-6)
+	
+	# Loop through polynomial orders.
+	weights = []
+	for i = range(0, 10):
+		# Zip x and y pairs together, fit a curve.
+		weights.append(PolCurFit(zip(x_training, y_training), i, labda=10**-6))
 
-	plot([weights0, weights1, weights3, weights9])
-	plot_rmse(y_training, [weights0, weights1, weights2, weights3, weights4, weights5, weights6, weights7, weights8, weights9])
+	plot([weights[0], weights[1], weights[3], weights[9]])
+	plot_rmse(y_training, weights)
 
-
+# Plot polynomial of order 0, 1, 3 and 9.
 def plot(weights_vector):
+	# Use a temporal resolution of 1000.
 	x_real = np.linspace(0, 1, 1000)
 	y_real = np.array([exercise_11.f(x_sample) for x_sample in x_real])
+	
 	fig, ax = plt.subplots(1)
 	ppl.plot(ax, x_real, y_real, linewidth=0.75, label='Function')
 
@@ -63,6 +69,8 @@ def plot(weights_vector):
 
 	fig.savefig('exercise1352.png')
 
+# Plots the root mean squared error of the polynomials given by weights_vector.
+# Shows the error on the training set, given by y_training, and on the test set, which is generated on-the-fly.
 def plot_rmse(y_training, weights_vector):
 	x_test = np.linspace(0, 1, 100)
 	y_test = exercise_11.sample_gaussian(exercise_11.f, 0, 0.3, x_test)
@@ -72,8 +80,8 @@ def plot_rmse(y_training, weights_vector):
 	i = 0
 	for weights in weights_vector:
 		poly_output_100 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 100)]
-		poly_output_10 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 40)]
-		rmse_training[i] = np.sqrt(np.mean((poly_output_10 - y_training)**2))
+		poly_output_40 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 40)]
+		rmse_training[i] = np.sqrt(np.mean((poly_output_40 - y_training)**2))
 		rmse_test[i] = np.sqrt(np.mean((poly_output_100 - y_test)**2))
 		i = i + 1
 
