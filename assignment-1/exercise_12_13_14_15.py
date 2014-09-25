@@ -37,7 +37,7 @@ def run_on_data():
 	
 	# Loop through polynomial orders.
 	weights = []
-	for i = range(0, 10):
+	for i in range(0, 10):
 		# Zip x and y pairs together, fit a curve.
 		weights.append(PolCurFit(zip(x_training, y_training), i, labda=10**-6))
 
@@ -67,7 +67,7 @@ def plot(weights_vector):
 	ax.set_ylabel('y')
 	ax.set_title('Polynomial approximation of sine function')
 
-	fig.savefig('exercise1352.png')
+	fig.savefig('exercise_polynomial_plot40.pdf')
 
 # Plots the root mean squared error of the polynomials given by weights_vector.
 # Shows the error on the training set, given by y_training, and on the test set, which is generated on-the-fly.
@@ -94,6 +94,43 @@ def plot_rmse(y_training, weights_vector):
 	ax.set_ylabel('RMSE')
 	ax.set_title('RMSE for the polynomial approximation of sine function')
 
-	fig.savefig('exercise135.png')
+	fig.savefig('exercise_rmse_plot40.pdf')
+
+def plot_lambda_effect():
+	x_training = np.linspace(0, 1, 40)
+	y_training = exercise_11.sample_gaussian(exercise_11.f, 0, 0.3, x_training)
+	
+	# Loop through lambda's.
+	weights_vector = []
+	for l in range(-5, 15):
+		# Zip x and y pairs together, fit a curve.
+		weights_vector.append(PolCurFit(zip(x_training, y_training), 9, labda=10**-l))
+
+	x_test = np.linspace(0, 1, 100)
+	y_test = exercise_11.sample_gaussian(exercise_11.f, 0, 0.3, x_test)
+
+	rmse_training = np.zeros((len(weights_vector)))
+	rmse_test = np.zeros((len(weights_vector)))
+	i = 0
+	weights_vector = weights_vector[::-1]
+	for weights in weights_vector:
+		poly_output_100 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 100)]
+		poly_output_40 = [eval_polynomial(weights, x) for x in np.linspace(0, 1, 40)]
+		rmse_training[i] = np.sqrt(np.mean((poly_output_40 - y_training)**2))
+		rmse_test[i] = np.sqrt(np.mean((poly_output_100 - y_test)**2))
+		i = i + 1
+
+	fig, ax = plt.subplots(1)
+
+	ppl.plot(ax, np.arange(-14, 6), rmse_training, linewidth=0.75, label='RMSE on training set')	
+	ppl.plot(ax, np.arange(-14, 6), rmse_test, linewidth=0.75, label='RMSE on test set')
+
+	ppl.legend(ax, loc='upper right', ncol=2)
+	ax.set_xlabel('$log_{10} \lambda$')
+	ax.set_ylabel('RMSE')
+	ax.set_title('RMSE for the polynomial approximation of sine function')
+
+	fig.savefig('exercise_lambda_rmse_plot40.pdf')
 
 run_on_data()
+plot_lambda_effect()

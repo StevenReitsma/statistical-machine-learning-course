@@ -23,7 +23,7 @@ def plot():
 	y_real = [f(x_sample) for x_sample in x_real]
 
 	fig, ax = plt.subplots(1)
-	ppl.plot(ax, x_training, y_training, linewidth=0.75, label='Observations')
+	ppl.plot(ax, x_training, y_training, '-o', linewidth=0.75, label='Observations')
 	ppl.plot(ax, x_real, y_real, linewidth=0.75, label='Function')
 
 	ppl.legend(ax, loc='upper right', ncol=2)
@@ -32,4 +32,6 @@ def plot():
 	ax.set_ylabel('y')
 	ax.set_title('Noisy observations versus real function')
 
-	fig.savefig('exercise_11.png')
+	fig.savefig('exercise_11.pdf')
+
+plot()

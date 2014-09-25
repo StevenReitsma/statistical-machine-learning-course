@@ -31,8 +31,8 @@ def gradient_descent(x_init, y_init, eta):
 		y_prev = y
 
 		# Gradient descent rules.
-		x = x - eta * rule_x(x, y)
-		y = x - eta * rule_y(x, y)
+		x = x_prev - eta * rule_x(x_prev, y_prev)
+		y = y_prev - eta * rule_y(x_prev, y_prev)
 
 		point_list.append((x, y))
 
@@ -49,24 +49,24 @@ def gradient_descent(x_init, y_init, eta):
 def plot_trajectory(point_list):
 	fig, ax = plt.subplots(1)
 
-	X = np.arange(-5, 5, 0.01)
-	Y = np.arange(-3, 3, 0.01)
+	X = np.arange(-1, 1.1, 0.01)
+	Y = np.arange(-0.1, 1.1, 0.01)
 	X, Y = np.meshgrid(X, Y)
 
 	Z = 100*(Y-X**2)**2 + (1-X)**2
 
-	ax.contour(X, Y, Z, 15, linewidths = 0.5, colors='k')
-	plt.pcolormesh(X, Y, Z, cmap = plt.get_cmap('rainbow'))
-	ax.plot([point[0] for point in point_list], [point[1] for point in point_list], '-o', color='#FFFF4C')
+	ax.contour(X, Y, Z, 100, linewidths = 0.5, colors='k')
+	plt.pcolormesh(X, Y, Z, cmap = plt.get_cmap('rainbow_r'))
+	ax.plot([point[0] for point in point_list], [point[1] for point in point_list], color='#FFFF4C')
 
-	ax.annotate('Init', (point_list[0][0]+0.05, point_list[0][1] + 0.05))
-	ax.annotate('1,1', (point_list[-1][0]+0.05, point_list[-1][1] + 0.05))
+	ax.annotate('Init', (point_list[0][0]+0.01, point_list[0][1] + 0.01))
+	ax.annotate('1,1', (point_list[-1][0]+0.01, point_list[-1][1] + 0.01))
 	plt.colorbar()
 
 	ax.set_xlabel('x')
 	ax.set_ylabel('y')
-	ax.set_title(r'Gradient descent trajectory with $\eta = 0.0001$')
+	ax.set_title(r'Gradient descent trajectory with $\eta = 0.001$')
 
-	fig.savefig('exercise24.png')
+	fig.savefig('trajectory.png', dpi=300)
 
-gradient_descent(-4, 2, 0.0001)
+gradient_descent(-0.5, 0.5, 0.001)
