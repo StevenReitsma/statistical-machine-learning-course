@@ -96,7 +96,85 @@
 			\begin{equation}
 				\boldsymbol\mu_t = \begin{pmatrix} 0.78848608 \\ 0.87686679 \end{pmatrix}
 			\end{equation}
-	\item
+	\item The plot shows a thin `strip' as illustrated in figure \ref{gaussian}. The density is highest at the mean, and the density decreases quickly as both x and y increase, or as both x and y decrease. The density decreases less quickly as $x \text{ XOR } y$ decreases. This makes sense when we look at $\boldsymbol\Sigma_p$.
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=\textwidth]{exercise_113_1.png}
+				\label{gaussian}
+				\caption{The probability density of the distribution. The axis on the bottom left is the x-axis.}
+			\end{figure}
+\end{enumerate}
+
+\subsection{Generating the data}
+\begin{enumerate}
+	\item Small subset to illustrate the data:
+			\begin{verbatim}
+				-6.550125505999724318e-01,-3.266004957677250964e+00
+				2.629696100570084738e+00,2.392902940429734171e-01
+				1.336595266086160194e+00,4.689984757937132542e+00
+				1.650219248260114124e+00,1.170028787392207059e+00
+				1.299340276829215046e+00,-2.175267671986114149e-02
+				1.729588572535984969e+00,4.837982469851976886e-01
+				9.217728990799070043e-01,-5.346863389136486955e-01
+				3.134103800140720097e-01,-1.955795492459505569e+00
+				4.493626096671710535e+00,1.535380383556263162e+00
+				-1.332499772337966126e+00,3.918138378413710043e+00
+			\end{verbatim}
+	\item This can easily be calculated using equations 2.121, 2.122 and 2.125.
+
+			\begin{align}
+				\boldsymbol\mu_{ML} &= \frac{1}{N} \sum_{n=1}^N \boldsymbol x_n \\
+				&= (0.66690639, 0.90843429)^T
+			\end{align}
+
+			Calculated using the following Python script:
+			\begin{verbatim}
+				pairs = np.loadtxt('pairs.csv', delimiter=',')
+				mu_ml = 1.0/np.size(pairs, 0) * sum(pairs)
+				print mu_ml
+			\end{verbatim}
+
+			For the covariance matrix:
+
+			\begin{align}
+				\boldsymbol\Sigma_{ML} &= \frac{1}{N} \sum_{n=1}^N (\boldsymbol x_n - \boldsymbol \mu_{ML})(\boldsymbol x_n - \boldsymbol\mu_{ML})^T\\
+				&= \begin{pmatrix} 2.06554144 & 0.84461216 \\ 0.84461216 & 3.930928 \end{pmatrix}
+			\end{align}
+
+			Calculated using the following Python script:
+			\begin{verbatim}
+				pairs = np.loadtxt('pairs.csv', delimiter=',')
+				mu_ml = 1.0/np.size(pairs, 0) * sum(pairs)
+				
+				sigma_ml = 1.0/np.size(pairs, 0) * np.dot((pairs - mu_ml).T, (pairs - mu_ml))
+				print sigma_ml
+			\end{verbatim}
+
+			For the unbiased covariance matrix:
+			\begin{align}
+				\boldsymbol \Sigma_U &= \frac{1}{N-1} \sum_{n=1}^N (\boldsymbol x_n - \boldsymbol \mu_{ML})(\boldsymbol x_n - \boldsymbol\mu_{ML})^T\\
+				&= \begin{pmatrix} 2.06760905 & 0.84545762 \\ 0.84545762 & 3.93486286 \end{pmatrix}
+			\end{align}
+
+			Comparing with the true values for $\boldsymbol\mu_t$ and $\boldsymbol\Sigma_t$ we can see that the estimation for $\boldsymbol\Sigma_t$ is not that far off, as can be seen by the absolute error below:
+
+			\begin{equation}
+				\vert \boldsymbol\Sigma_t - \boldsymbol\Sigma_U \vert_{\text{elementwise}} =
+				\begin{pmatrix}
+					0.06554144 & 0.04461216 \\
+					0.04461216 & 0.069072 
+				\end{pmatrix}
+			\end{equation}
+
+			The error for the mean is slightly larger, especially for the first component:
+
+			\begin{equation}
+				\vert \boldsymbol\mu_t - \boldsymbol\mu_{ML} \vert_{\text{elementwise}} =
+				\begin{pmatrix}
+					0.12157969 \\
+					0.03156750
+				\end{pmatrix}
+			\end{equation}
 \end{enumerate}
 
 \end{document}
