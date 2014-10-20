@@ -177,4 +177,65 @@
 			\end{equation}
 \end{enumerate}
 
+\subsection{Sequential learning algorithms}
+
+\begin{enumerate}
+	\item Using equation 2.126 from Bishop I wrote the following piece of Python code:
+
+			\begin{verbatim}
+				def sequential_mean(pairs):
+				    mu = 0
+				    for i in range(1, np.size(pairs, 0)+1):
+				        mu = mu + 1.0 / i * (pairs[i-1] - mu)
+				        print mu
+			\end{verbatim}
+
+			This converges to the same result as the batch result. In a real world scenario the pairs would be read sequentially from the file as well.
+	\item Matching the variables we get the following equations:
+
+			\begin{align}
+				p(\boldsymbol\mu) &= \mathcal{N} (\boldsymbol\mu \vert \boldsymbol\mu^{(n-1)}, \boldsymbol\Sigma^{(n-1)})\\
+				p(\boldsymbol x_n \vert \boldsymbol\mu) &= \mathcal{N} (\boldsymbol x_n \vert \boldsymbol\mu, \boldsymbol\Sigma_t)\\
+				p(\boldsymbol x_n) &= \mathcal{N} (\boldsymbol x_n \vert \boldsymbol\mu^{(n-1)}, \boldsymbol\Sigma_t + \boldsymbol\Sigma^{(n-1)})\\
+				p(\boldsymbol\mu \vert \boldsymbol x_n) &= \mathcal{N} (\boldsymbol\mu \vert \boldsymbol S \{ \boldsymbol\Sigma_t^{-1} \boldsymbol x_n + \frac{1}{\boldsymbol\Sigma^{(n-1)}} \boldsymbol\mu^{(n-1)} \}, \boldsymbol S)\\
+				\boldsymbol S &= (\frac{1}{\boldsymbol\Sigma^{(n-1)}} + \boldsymbol\Sigma_t^{-1})^{-1}
+			\end{align}
+
+			Using equation 1.21 we can compute $\boldsymbol \mu^{(n)}$.
+
+			So our ``update-rules'' for the $\boldsymbol\mu$ and $\boldsymbol\Sigma$ are as follows:
+
+			\begin{align}
+				\boldsymbol\mu^{(n)} &= \boldsymbol S \{ \boldsymbol\Sigma_t^{-1} \boldsymbol x_n + \frac{1}{\boldsymbol\Sigma^{(n-1)}} \boldsymbol\mu^{(n-1)} \}\\
+				\boldsymbol\Sigma^{(n)} &= \boldsymbol S
+			\end{align}
+	\item Implementing in Python was easy using the two equations above. As a result for the final $\boldsymbol\mu$ I got the following:
+
+			\begin{align}
+				\boldsymbol\mu = \begin{pmatrix} 0.67161114 \\ 0.91312478 \end{pmatrix}
+			\end{align}
+
+			The code snippet:
+
+			\begin{verbatim}
+					for i in range(1, np.size(pairs, 0)+1):
+					    S = np.linalg.inv(np.linalg.inv(sigma[i-1]) + np.linalg.inv(sigma_t))
+					    mu[i] = np.dot(S, (np.dot(np.linalg.inv(sigma_t), pairs[i-1]) +
+					            np.dot(np.linalg.inv(sigma[i-1]), mu[i-1])))
+					    sigma[i] = S
+
+					    print mu[i]
+			\end{verbatim}
+
+			Note that \verb|np.dot| is equivalent to Matlab's *-operator.
+	\item This would be more clear in two separate plots, but since the assignment requires a single graph I have done as requested.
+		  In the figure it is clear that the MAP estimation performs better when the number of data points is low. This makes sense since the MAP estimation is like a regularized version of the ML estimator. For a higher number of data points, the difference is very small.
+
+			\begin{figure}[h!]
+				\centering
+				\hspace*{-10em}\includegraphics[width=1.3\textwidth]{exercise_134.png}
+				\caption{The two dotted lines show the MAP (blue) and ML (green) estimations for $\mu_{t1}$ while the solid lines show the estimations for $\mu_{t2}$. You can zoom in on the .pdf to show the figure more clearly.}
+			\end{figure}
+\end{enumerate}
+
 \end{document}
