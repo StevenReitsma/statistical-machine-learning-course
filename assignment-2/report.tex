@@ -97,7 +97,7 @@
 				\boldsymbol\mu_t = \begin{pmatrix} 0.78848608 \\ 0.87686679 \end{pmatrix}
 			\end{equation}
 	\item The plot shows a thin `strip' as illustrated in figure \ref{gaussian}. The density is highest at the mean, and the density decreases quickly as both x and y increase, or as both x and y decrease. The density decreases less quickly as $x \text{ XOR } y$ decreases. This makes sense when we look at $\boldsymbol\Sigma_p$.
-			\begin{figure}[h!]
+			\begin{figure}[H]
 				\centering
 				\includegraphics[width=\textwidth]{exercise_113_1.png}
 				\label{gaussian}
@@ -228,14 +228,20 @@
 			\end{verbatim}
 
 			Note that \verb|np.dot| is equivalent to Matlab's *-operator.
-	\item This would be more clear in two separate plots, but since the assignment requires a single graph I have done as requested.
-		  In figure \ref{map} it is clear that the MAP estimation performs better when the number of data points is low. This makes sense since the MAP estimation is like a regularized version of the ML estimator. For a higher number of data points, the difference is very small.
+	\item In figure \ref{map} it is clear that the MAP estimation performs better when the number of data points is low. This makes sense since the MAP estimation is like a regularized version of the ML estimator. For a higher number of data points, the difference is very small. The trajectory can be seen in figure \ref{traj}.
 
-			\begin{figure}[ht!]
+			\begin{figure}[H]
 				\centering
 				\hspace*{-10em}\includegraphics[width=1.3\textwidth]{exercise_134.png}
 				\caption{The two dotted lines show the MAP (blue) and ML (green) estimations for $\mu_{t1}$ while the solid lines show the estimations for $\mu_{t2}$. You can zoom in on the .pdf to show the figure more clearly.}
 				\label{map}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=0.55]{trajectory.png}
+				\caption{The trajectory of the ML and MAP estimations.}
+				\label{traj}
 			\end{figure}
 \end{enumerate}
 
@@ -249,6 +255,7 @@
 				&= \frac{1}{2} - - \frac{1}{2} = 1
 			\end{align}
 	\item 
+			Below you will find the derivation:
 			\begin{align}
 				p_x(x) &= p_\theta(\theta_k) \, \bigg\vert \frac{d\theta}{dy} \bigg\vert \\
 				&= p_\theta(g(x)) \, \big\vert g'(x) \big\vert \\
@@ -257,8 +264,17 @@
 				&= \frac{\beta}{\big(x_k - \alpha\big)^2 + \beta^2} \\
 				p_\theta(g(x)) &= \frac{1}{\pi} \\
 				p_x(x) &= \frac{\beta}{\big(x_k - \alpha\big)^2 + \beta^2} \cdot \frac{1}{\pi} \\
-				&= \frac{\beta}{\pi \big[\big(x_k - \alpha\big)^2 + \beta^2\big]} \\
+				&= \frac{\beta}{\pi \big[\big(x_k - \alpha\big)^2 + \beta^2\big]} 
 			\end{align}
+
+			See figure \ref{distrr} for the plot of a distribution for $\beta = 1, \alpha = 0$.
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=0.55]{distr.png}
+				\caption{This figure shows the distribution for $\beta = 1, \alpha = 0$. The probability of $x_k$ being $\alpha$ is the highest.}
+				\label{distrr}
+			\end{figure}
 	\item
 			\begin{align}
 				p(a \vert \mathcal{D}, \beta) &= p(\mathcal{D} \vert \alpha, \beta)p(\alpha \vert \beta) \\
@@ -268,7 +284,8 @@
 				&= \ln(\frac{\beta}{\pi}) + \ln(\frac{1}{\big[\big(x_k - \alpha\big)^2 + \beta^2\big]}) \\
 				&= \ln(\frac{\beta}{\pi}) - \ln(\big[\big(x_k - \alpha\big)^2 + \beta^2\big]) \\
 				p(\mathcal{D} \vert \alpha, \beta) &= \prod_{x_k \in \mathcal{D}} p(x_k \vert \alpha, \beta) \\
-				\ln(p(\mathcal{D} \vert \alpha, \beta)) &= \vert \mathcal{D} \vert \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln\big(\big[\big(x_k - \alpha\big)^2 + \beta^2\big]\big) 
+				\ln(p(\mathcal{D} \vert \alpha, \beta)) &= \#\mathcal{D} \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln\big(\big[\big(x_k - \alpha\big)^2 + \beta^2\big]\big) \\
+				ln(p(\alpha \vert \mathcal{D}, \beta)) &= \#\mathcal{D} \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln\big(\big[\big(x_k - \alpha\big)^2 + \beta^2\big]\big)
 			\end{align}
 
 			Maximizing this gives the following expression:
@@ -282,15 +299,117 @@
 					\bar\alpha &= -0.183333
 				\end{align}
 
-			With the following plot:
+			I produced the plot as seen in figure \ref{distr_all}.
 
-			\begin{figure}[ht!]
+			\begin{figure}[H]
 				\centering
 				\includegraphics[scale=0.55]{exercise_214.png}
 				\caption{$p(\alpha \vert \mathcal{D}, \beta = 1)$ plotted as a function of $\alpha$.}
+				\label{distr_all}
 			\end{figure}
 
-			The mean and the maximum value differ because of the outliers in the data set. If we have a data set without many outliers (e.g. mean = median) then the mean of the data set and $\hat\alpha$ are approximately the same.
+			The mean and the maximum value differ because of the outliers in the data set. If we have a data set without many outliers (e.g. mean = median) then the mean of the data set and $\hat\alpha$ are approximately the same. Because of the square in the equation the outliers are weighted more.
+\end{enumerate}
+
+\subsection{Generate the lighthouse data}
+\begin{enumerate}
+	\item \begin{align}
+			\alpha_t &= 7.11950 \\
+			\beta_t &= 1.24540
+		  \end{align}
+
+		  Obtained using the following Python script:
+
+		  \begin{verbatim}
+		  def sample_random_position(interval_coast, interval_sea):
+			     print np.random.uniform(interval_coast[0], interval_coast[1])
+			     print np.random.uniform(interval_sea[0], interval_sea[1])
+		  \end{verbatim}
+
+	\item
+			Since the angles are i.i.d. we can generate the data set using the following script:
+
+			\begin{verbatim}
+
+			def generate_set():
+			    x = []
+			    for i in range(0, 200):
+			        rand_theta = np.random.uniform(-np.pi/2, np.pi/2)
+			        x.append(beta * np.tan(rand_theta) + alpha)
+
+			    return x
+			\end{verbatim}
+
+			A histogram of the generated set produces a plot as shown in figure \ref{histo}.
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{histogram.png}
+				\caption{The histograms shows a distribution with $x_k$ on the x-axis and the number of samples in the bin on the y-axis.}
+				\label{histo}
+			\end{figure}
+
+	\item Looking at the plot in figure \ref{meanplot} I would say the estimation for the mean needs at least 100 data points. However, sometimes a very large outlier is generated in the data set, which results in a plot as presented in figure \ref{badplot}. This shows that the mean is not a very good measurement for determining $\alpha$ if there are outliers in the data.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=0.7]{mean_plot.png}
+				\caption{The mean plotted against the number of data points taken into account. The blue line indicates the true mean.}
+				\label{meanplot}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=0.7]{messed_up.png}
+				\caption{Showing the same plot as in figure \ref{meanplot}, but for a different data set. This time a data set with a strong positive outlier.} 
+				\label{badplot}
+			\end{figure}
+			\end{enumerate}
+\subsection{Find the lighthouse}
+\begin{enumerate}
+	\item 
+
+			\begin{equation}
+				L = \ln(p(\mathcal{D} \vert \alpha, \beta)) = \#\mathcal{D} \cdot \ln(\frac{\beta}{\pi}) - \sum_{k=1}^N \ln \big[\beta^2 + (x_k - \alpha)^2\big]
+			\end{equation}
+	\item
+			See the plots in figures \ref{log1}, \ref{log2}, \ref{log3} and \ref{log20}. It makes more sense to use the log likelihood, since the regular likelihood decreases very quickly due to the square term. The log likelihood thus gives a better visual representation of what is going on.
+
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{log1.png}
+				\caption{The log likelihood plot for $k = 1$ data points.} 
+				\label{log1}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{log2.png}
+				\caption{The log likelihood plot for $k = 2$ data points.} 
+				\label{log2}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{log3.png}
+				\caption{The log likelihood plot for $k = 3$ data points.} 
+				\label{log3}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{log20.png}
+				\caption{The log likelihood plot for $k = 20$ data points.} 
+				\label{log20}
+			\end{figure}
+	\item As we can see in figure \ref{final}, the value converges after only 20-25 data points. This is a huge improvement over the 100 points needed using the method performed in exercise 2.2.3.
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{final.png}
+				\caption{The most likely values of $\alpha$ and $\beta$ as a function of the amount of data points $k$.} 
+				\label{final}
+			\end{figure}
 \end{enumerate}
 
 \end{document}

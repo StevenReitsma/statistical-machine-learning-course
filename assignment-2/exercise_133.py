@@ -28,7 +28,8 @@ def sequential_MAP(pairs, mu_p, mu_t, sigma_p, sigma_t):
 
 		print mu[i]
 
-	plot(pairs, mu, mu_t)
+	#plot(pairs, mu, mu_t)
+	plot_trajectory(pairs, mu, mu_t)
 
 def plot(pairs, mu, mu_t):
 	ml = sequential_mean(pairs)
@@ -45,6 +46,20 @@ def plot(pairs, mu, mu_t):
 	axes = plt.gca()
 	axes.set_xlim([0,1000])
 	axes.set_ylim([0,1.5])
+
+	plt.show()
+
+def plot_trajectory(pairs, mu, mu_t):
+	ml = sequential_mean(pairs)
+	a = plt.plot(ml[:, 0], ml[:, 1], alpha=0.5, color='red', label='$\mu_{ML}$')
+	b = plt.plot(mu[:, 0], mu[:, 1], alpha=0.5, color='blue', label='$\mu_{MAP}$')
+	c = plt.scatter(mu_t[0], mu_t[1], marker='+', s=125, linewidths=2, alpha=1, color='green', label='$\mu_{t}$')
+
+	plt.legend()
+
+	axes = plt.gca()
+	axes.set_xlim([0.4,1.55])
+	axes.set_ylim([-0.5,1.2])
 
 	plt.show()
 
