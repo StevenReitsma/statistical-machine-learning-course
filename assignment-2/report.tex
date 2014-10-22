@@ -229,24 +229,68 @@
 
 			Note that \verb|np.dot| is equivalent to Matlab's *-operator.
 	\item This would be more clear in two separate plots, but since the assignment requires a single graph I have done as requested.
-		  In the figure it is clear that the MAP estimation performs better when the number of data points is low. This makes sense since the MAP estimation is like a regularized version of the ML estimator. For a higher number of data points, the difference is very small.
+		  In figure \ref{map} it is clear that the MAP estimation performs better when the number of data points is low. This makes sense since the MAP estimation is like a regularized version of the ML estimator. For a higher number of data points, the difference is very small.
 
-			\begin{figure}[h!]
+			\begin{figure}[ht!]
 				\centering
 				\hspace*{-10em}\includegraphics[width=1.3\textwidth]{exercise_134.png}
 				\caption{The two dotted lines show the MAP (blue) and ML (green) estimations for $\mu_{t1}$ while the solid lines show the estimations for $\mu_{t2}$. You can zoom in on the .pdf to show the figure more clearly.}
+				\label{map}
 			\end{figure}
 \end{enumerate}
 
 \section{The faulty lighthouse}
 \subsection{Constructing the model}
 \begin{enumerate}
-	\item This makes sense since the following should (and does) hold:
+	\item It is a reasonable distribution since the following should (and does) hold:
 			\begin{align}
 				\int_{-\frac{1}{2}\pi}^{\frac{1}{2}\pi} \frac{1}{\pi} \, dx &= 1 \tag{To be proven}\\
 				&= \left. \frac{x}{\pi} + C \right|_{-\frac{1}{2}\pi}^{\frac{1}{2}\pi}\\
 				&= \frac{1}{2} - - \frac{1}{2} = 1
 			\end{align}
+	\item 
+			\begin{align}
+				p_x(x) &= p_\theta(\theta_k) \, \bigg\vert \frac{d\theta}{dy} \bigg\vert \\
+				&= p_\theta(g(x)) \, \big\vert g'(x) \big\vert \\
+				g(x) &= \tan^{-1} \bigg(\frac{x_k - \alpha}{\beta}\bigg) \\
+				g'(x) &= \frac{1}{1 + \bigg(\frac{x_k - \alpha}{\beta}\bigg)^2} \cdot \frac{1}{\beta} \\
+				&= \frac{\beta}{\big(x_k - \alpha\big)^2 + \beta^2} \\
+				p_\theta(g(x)) &= \frac{1}{\pi} \\
+				p_x(x) &= \frac{\beta}{\big(x_k - \alpha\big)^2 + \beta^2} \cdot \frac{1}{\pi} \\
+				&= \frac{\beta}{\pi \big[\big(x_k - \alpha\big)^2 + \beta^2\big]} \\
+			\end{align}
+	\item
+			\begin{align}
+				p(a \vert \mathcal{D}, \beta) &= p(\mathcal{D} \vert \alpha, \beta)p(\alpha \vert \beta) \\
+				p(x_k \vert \alpha, \beta) &= \frac{\beta}{\pi \big[\big(x_k - \alpha\big)^2 + \beta^2\big]} \\
+				&= \frac{\beta}{\pi} \cdot \frac{1}{\big[\big(x_k - \alpha\big)^2 + \beta^2\big]} \\
+				\ln(p(x_k \vert \alpha, \beta)) &= \ln(\frac{\beta}{\pi} \cdot \frac{1}{\big[\big(x_k - \alpha\big)^2 + \beta^2\big]}) \\
+				&= \ln(\frac{\beta}{\pi}) + \ln(\frac{1}{\big[\big(x_k - \alpha\big)^2 + \beta^2\big]}) \\
+				&= \ln(\frac{\beta}{\pi}) - \ln(\big[\big(x_k - \alpha\big)^2 + \beta^2\big]) \\
+				p(\mathcal{D} \vert \alpha, \beta) &= \prod_{x_k \in \mathcal{D}} p(x_k \vert \alpha, \beta) \\
+				\ln(p(\mathcal{D} \vert \alpha, \beta)) &= \vert \mathcal{D} \vert \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln\big(\big[\big(x_k - \alpha\big)^2 + \beta^2\big]\big) 
+			\end{align}
+
+			Maximizing this gives the following expression:
+			\begin{align}
+				\hat \alpha = \arg\max_\alpha \bigg[ \, \vert \mathcal{D} \vert \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln\big(\big[\big(x_k - \alpha\big)^2 + \beta^2\big]\big) \bigg]
+			\end{align}
+	\item
+			Using a simple Python script I got the following values:
+				\begin{align}
+					\hat\alpha &= 1.17137\\
+					\bar\alpha &= -0.183333
+				\end{align}
+
+			With the following plot:
+
+			\begin{figure}[ht!]
+				\centering
+				\includegraphics[scale=0.55]{exercise_214.png}
+				\caption{$p(\alpha \vert \mathcal{D}, \beta = 1)$ plotted as a function of $\alpha$.}
+			\end{figure}
+
+			The mean and the maximum value differ because of the outliers in the data set. If we have a data set without many outliers (e.g. mean = median) then the mean of the data set and $\hat\alpha$ are approximately the same.
 \end{enumerate}
 
 \end{document}
