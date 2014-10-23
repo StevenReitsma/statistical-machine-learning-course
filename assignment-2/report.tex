@@ -77,7 +77,7 @@
 		\end{align}
 
 		\begin{align}
-			\boldsymbol\mu_p = \boldsymbol\mu_{a} - \boldsymbol\Lambda_{aa}^{-1} \boldsymbol\Lambda_{ab} (\boldsymbol x_{b} - \boldsymbol\mu_{b}) \tag{according to 2.75}\\
+			\boldsymbol\mu_p = \boldsymbol\mu_{a} - \boldsymbol\Lambda_{aa}^{-1} \boldsymbol\Lambda_{ab} (\boldsymbol x_{b} - \boldsymbol\mu_{b}) \tag{according to 2.75}
 		\end{align}
 		In this equation, $a$ is the first partition and $b$ is the second partition when partitioned according to equation 2.65.
 		\begin{align}
@@ -372,7 +372,7 @@
 				L = \ln(p(\mathcal{D} \vert \alpha, \beta)) = \#\mathcal{D} \cdot \ln(\frac{\beta}{\pi}) - \sum_{k=1}^N \ln \big[\beta^2 + (x_k - \alpha)^2\big]
 			\end{equation}
 	\item
-			See the plots in figures \ref{log1}, \ref{log2}, \ref{log3} and \ref{log20}. It makes more sense to use the log likelihood, since the regular likelihood decreases very quickly due to the square term. The log likelihood thus gives a better visual representation of what is going on.
+			See the plots in figures \ref{log1}, \ref{log2}, \ref{log3} and \ref{log20}. It makes more sense to use the log likelihood, since the regular likelihood decreases very quickly due to the square term. The log likelihood thus gives a better visual representation of what is going on. Furthermore, we can see that after just one observed data point, the estimate for $\beta$ is always 0. For more data points, this changes. The value for $\alpha$ is estimated correctly from very few data points early on.
 
 
 			\begin{figure}[H]
