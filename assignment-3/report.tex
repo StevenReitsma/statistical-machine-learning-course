@@ -32,6 +32,22 @@
 
 \newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
 
+\newtoks\rowvectoks
+\newcommand{\rowvec}[2]{%
+  \rowvectoks={#2}\count255=#1\relax
+  \advance\count255 by -1
+  \rowvecnexta}
+\newcommand{\rowvecnexta}{%
+  \ifnum\count255>0
+    \expandafter\rowvecnextb
+  \else
+    \begin{pmatrix}\the\rowvectoks\end{pmatrix}
+  \fi}
+\newcommand\rowvecnextb[1]{%
+    \rowvectoks=\expandafter{\the\rowvectoks&#1}%
+    \advance\count255 by -1
+    \rowvecnexta}
+
 \title{	
 \normalfont \normalsize 
 \textsc{Radboud University Nijmegen}  % Your university, school and/or department name(s)
@@ -48,5 +64,130 @@
 
 \maketitle % Print the title
 
+\section{Bayesian linear regression}
+\begin{enumerate}
+	\item   We follow the same procedure as in exercise 2, week 7, but we fill in the data points right away.
+
+			\textbf{Step 1: Finding the vector $\phi(x)$}
+			\begin{align}
+				y(x, \boldsymbol w) &= \phi(\boldsymbol x)^T\boldsymbol w = w_0 + w_1x\\
+				\phi(x) &= \begin{pmatrix}
+								1\\
+								x
+							\end{pmatrix}
+			\end{align}
+
+			\textbf{Step 2: Write out $\Phi^T\boldsymbol t$ and $\Phi^T\Phi$ in terms of the data points}
+			\begin{align}
+				\Phi_{nj} &= \phi_j(x_n)\\
+				\Phi &= \begin{pmatrix}
+							1 & 0.4 \\
+							1 & 0.6
+						\end{pmatrix}\\
+				\Phi^T \boldsymbol t &= \begin{pmatrix}
+											1 & 1\\
+											0.4 & 0.6
+										\end{pmatrix}
+										\begin{pmatrix}
+											0.05\\
+											-0.35
+										\end{pmatrix}\\
+									&= \begin{pmatrix}
+											-0.3\\
+											-0.19
+										\end{pmatrix}\\
+				\Phi^T\Phi &= \begin{pmatrix}
+								1 & 1\\
+								0.4 & 0.6
+							 \end{pmatrix}
+							 \begin{pmatrix}
+							 	1 & 0.4\\
+							 	1 & 0.6
+							 \end{pmatrix}\\
+							 &= \begin{pmatrix}
+							 		2 & 1\\
+							 		1 & 0.52
+							 	\end{pmatrix}
+			\end{align}
+
+			\textbf{Step 3: Compute the posterior}
+			\begin{align}
+				p(\boldsymbol w \vert \boldsymbol t, \boldsymbol x) &= \mathcal{N}(\boldsymbol w \vert \boldsymbol m_N, \boldsymbol S_N)\\
+				\boldsymbol m_N &= \beta \boldsymbol S_N \Phi^T \boldsymbol t\\
+				\boldsymbol S_N^{-1} &= \alpha \boldsymbol I + \beta \Phi^T\Phi\\
+								 &= \begin{pmatrix}
+								 		\alpha & 0\\
+								 		0 & \alpha
+								 	\end{pmatrix} + 
+								 	\beta \begin{pmatrix}
+								 				2 & 1\\
+								 				1 & 0.52
+								 		  \end{pmatrix}\\
+				\alpha &= 2\\
+				\beta &= 10\\
+				\boldsymbol S_N^{-1} &= \begin{pmatrix}
+											22 & 10\\
+											10 & 7.2
+										  \end{pmatrix}\\
+				\boldsymbol m_N &= 10 \begin{pmatrix}
+											22 & 10\\
+											10 & 7.2
+										\end{pmatrix}^{-1}
+										\begin{pmatrix}
+											-0.3\\
+											-0.19
+										\end{pmatrix}\\
+								 &= \begin{pmatrix}
+								 		-0.0445\\
+								 		-0.2021
+								 	\end{pmatrix}
+			\end{align}
+
+			\textbf{Step 4: Compute the predictive distribution}
+			\begin{align}
+				p(t \vert x, \boldsymbol t, \boldsymbol x) &= \mathcal{N}(t \vert \boldsymbol m_N^T \phi(x), \sigma^2_N(x))\\
+														   &= \mathcal{N}(t \vert m(x), s^2(x))\\
+				m(x) &= \boldsymbol m_N^T\phi(x) \\
+				s^2(x) &= \sigma^2_N(x) = \frac{1}{\beta} + \phi(x)^T \boldsymbol S_N \phi(x)\\
+				m(x) &= \begin{pmatrix}
+							-0.0445\\
+							-0.2021
+						\end{pmatrix}^T
+						\begin{pmatrix}
+							1\\
+							x
+						\end{pmatrix}\\
+				s^2(x) &= \frac{1}{10} + \begin{pmatrix}
+											1\\
+											x
+										 \end{pmatrix}^T
+										 \begin{pmatrix}
+										 	22 & 10\\
+										 	10 & 7.2
+										 \end{pmatrix}^{-1}
+										 \begin{pmatrix}
+										 	1\\
+										 	x
+										 \end{pmatrix}
+			\end{align}
+	\item 
+	\item
+\end{enumerate}
+
+\section{Logistic regression}
+\subsection{The IRLS algorithm}
+\begin{enumerate}
+	\item 
+	\item
+\end{enumerate}
+
+\subsection{Two-class classification using logistic regression}
+\begin{enumerate}
+	\item 
+	\item
+	\item
+	\item
+	\item
+\end{enumerate}
 
 \end{document}
