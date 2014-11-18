@@ -170,8 +170,22 @@
 										 	x
 										 \end{pmatrix}
 			\end{align}
-	\item 
-	\item
+	\item The plot is shown in figure \ref{meanvar}. The figure clearly shows that currently, the initial prior still has a large effect. In a maximum likelihood solution, the line would now go through both of the data points. This can be shown by taking a lower value of $\alpha$ (or taking higher $\beta$), which will decrease the prior's certainty. The difference with the figure 3.8b in Bishop is explained by the fact that we use only a two-dimensional Gaussian basis function $\phi_j$, whereas Bishop uses 9.
+
+		  \begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.65]{exercise_12.pdf}
+			\caption{The blue line indicates the mean of the predictive distribution plotted against x. The two gray dots are the data points and the red area indicates the standard deviation. The area is bound by the mean plus the standard deviation and by the mean minus the standard deviation.}
+			\label{meanvar}
+		  \end{figure}
+	\item In figure \ref{sampled} some sampled linear equations are shown in green.
+
+	\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.65]{exercise_13.pdf}
+			\caption{The green lines represent $y(x, \boldsymbol w)$ where the weights $\boldsymbol w$ are sampled from the posterior distribution.}
+			\label{sampled}
+		  \end{figure}
 \end{enumerate}
 
 \section{Logistic regression}
