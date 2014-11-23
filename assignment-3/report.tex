@@ -192,7 +192,88 @@
 \subsection{The IRLS algorithm}
 \begin{enumerate}
 	\item 
+		We derive $f(x) = \sin(x)$, which gives $f'(x) = \cos(x)$, deriving this gives $f''(x) = -\sin(x)$.
+		\begin{align}
+			x^{(n+1)} &= x^{(n)} - \frac{f'(x^{(n)})}{f''(x^{(n)})}\\
+			&= x^{(n)} + \frac{\cos(x^{(n)})}{\sin(x^{(n)})}
+		\end{align}
+
+		With the following Python code we can run several iterations easily:
+
+		\begin{verbatim}
+		from math import cos, sin
+
+		def next(x):
+		    return x + cos(x)/sin(x)
+
+		if __name__ == "__main__":
+		    x = 1
+		    print x
+		    for i in range(0, 10):
+		        x = next(x)
+		        print x
+		\end{verbatim}
+
+		The output for $x^{(0)} = 1$ is as follows:
+
+		\begin{verbatim}
+		1
+		1.64209261593
+		1.57067527716
+		1.5707963268
+		1.57079632679
+		1.57079632679
+		\end{verbatim}
+
+		It looks like the value of $x$ converges after 4 iterations in this case. $\sin(x)$ has indeed $\approx 1.57$ as its maximum.
+
+		For $x^{(0)} = -1$:
+
+		\begin{verbatim}
+		-1
+		-1.64209261593
+		-1.57067527716
+		-1.5707963268
+		-1.57079632679
+		-1.57079632679
+		\end{verbatim}
+
+		In this case, the algorithm also converges after 4 iterations. Now, the value is a minimum of $\sin(x)$. This can be expected since this method does not differentiate between minimums and maximums. It finds the values where the derivative is 0, which is the case in both the maxima and minima of a function.
 	\item
+		Using the following Python code the value for $\boldsymbol w$ converges after approximately 6 iterations to $\approx [9.8, -21.7]$.
+		\begin{verbatim}
+def gradient(phi, y, t):
+    return np.dot(phi.T, y - t)
+
+def hessian(phi, y):
+    R = np.diag(np.squeeze(y * (1-y))) # squeezing out extra dim. required for np.diag to work
+    return np.dot(phi.T, np.dot(R, phi))
+
+def sigmoid(x):
+    return 1.0 / (1 + np.exp(-x))
+
+if __name__ == "__main__":
+    w = np.array([[1], [1]])
+    x = np.array([0.3, 0.44, 0.46, 0.6])
+    t = np.array([[1], [0], [1], [0]])
+    phi = np.array([[1, xx] for xx in x])
+
+    for i in range(0, 10):
+        y = sigmoid(np.dot(phi, w))
+
+        cur_gradient = gradient(phi, y, t)
+        cur_hessian = hessian(phi, y)
+
+        w = w - np.dot(inv(cur_hessian), cur_gradient)
+
+        print w
+		\end{verbatim}
+
+		To show that $\phi = 0.45$ is the decision boundary, we need to check whether the probability of a data point with $\phi = 0.45$ is the same for $C_1$ and $C_2$. This consequently means that they should both be $0.5$ since $p(C_1 \vert \phi) + p(C_2 \vert \phi) = 1$.
+
+		\begin{equation}
+			p(C_1 \vert \phi) = y(\phi) = \sigma (\boldsymbol w^T \phi) = \sigma (\begin{pmatrix} 9.78227684 \\ -21.73839298 \end{pmatrix}^T \begin{pmatrix} 1\\0.45 \end{pmatrix}) = 0.50
+		\end{equation}
 \end{enumerate}
 
 \subsection{Two-class classification using logistic regression}
