@@ -178,7 +178,16 @@
 			\caption{The blue line indicates the mean of the predictive distribution plotted against x. The two gray dots are the data points and the red area indicates the standard deviation. The area is bound by the mean plus the standard deviation and by the mean minus the standard deviation.}
 			\label{meanvar}
 		  \end{figure}
-	\item In figure \ref{sampled} some sampled linear equations are shown in green.
+	\item In figure \ref{sampled} some sampled linear equations are shown in green. The code snippet is shown below.
+
+	\begin{verbatim}
+		rands = np.random.multivariate_normal((-0.0445, -0.2021), inv(((22, 10), (10, 7.2))), 5)
+	
+		for r in rands:
+		    x_range = np.linspace(0, 1, 100)
+		    m_vals = np.array([np.dot(r.T, phi(x)) for x in x_range])
+		    plt.plot(x_range, m_vals, alpha = 0.5, color='green')
+	\end{verbatim}
 
 	\begin{figure}[H]
 			\centering
@@ -209,7 +218,7 @@
 		if __name__ == "__main__":
 		    x = 1
 		    print x
-		    for i in range(0, 10):
+		    for i in range(0, 5):
 		        x = next(x)
 		        print x
 		\end{verbatim}
@@ -278,11 +287,91 @@ if __name__ == "__main__":
 
 \subsection{Two-class classification using logistic regression}
 \begin{enumerate}
-	\item 
+	\item See figure \ref{scatter_iris}.
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=0.75]{exercise_221.pdf}
+				\caption{Scatter plot of the IRLS data set.}
+				\label{scatter_iris}
+			\end{figure}
+			I believe logistic regression can be a good fit for this problem since there is a clear pattern in the scatter plot. Some sort of Gaussian basis function could work well with the obvious densities as visible in the plot. A dummy basis function will not work since the problem is not seperable by a line.
 	\item
+		The class probabilities are all 0.5 since:
+		\begin{equation}
+			p(C_1 \vert \phi) = y(\phi) = \sigma (\boldsymbol w^T \phi) = \sigma (\begin{pmatrix} 0 \\ 0 \\ 0 \end{pmatrix}^T \phi) = \sigma (0) = 0.5
+		\end{equation}
+		The modifications that were needed to make the algorithm work are as follows:
+		\begin{verbatim}
+			w = np.array([[0], [0], [0]])     instead of
+			    w = np.array([[1], [1]])
+
+			phi = np.array([[1, xx[0], xx[1]] for xx in x])    instead of    
+			    phi = np.array([[1, xx] for xx in x])
+		\end{verbatim}
+		The rest of the algorithm was already implemented in a way that handles multi-dimensional input data.
 	\item
+		The scatter plot can be found in figure \ref{scatter_dummy}. Darker colors indicate a higher probability for $C_1$. Note that the probabilities have been scaled to the range $0 < p(C_1 \vert \phi) < 1$ to show the differences between probabilities in the scatter plot. If we do not scale the values, there is no visible difference. In reality the probabilities range from $0.48$ to $0.51$. The scatter plot shows that logistic regression with this basic basis function does not perform well, as is to be expected.
+
+		The obtained weights after 1000 iterations were:
+		\begin{equation}
+			\boldsymbol {\hat w} = \begin{pmatrix}
+						0.00440664\\
+						-0.02139153\\
+						-0.04930069
+					 \end{pmatrix}
+		\end{equation}
+
+		The cross entropy error for the initial weights was approximately $693.2$. The error after optimization was $692.9$.
+		This proves the conclusions we drew from the scatter plot: logistic regression does not work well on this data set with this basic basis function.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{exercise_223.pdf}
+			\caption{Scatter plot of the IRLS data set. A darker color indicates a higher probability for $C_1$. Note that the probabilities are scaled, in reality they lie in the range $0.48 < p(C_1 \vert \phi) < 0.51$.}
+			\label{scatter_dummy}
+		\end{figure}
 	\item
+		Changing the previous basis function to the Gaussian basis function was very easy. The relevant lines of code are shown below. Note that the normalization of the Gaussian is not really necessary.
+
+		\begin{verbatim}
+			def gbf(x, m, s):
+			    sigma = s * np.identity(np.array(m).shape[0])
+			    a = (x-m)[np.newaxis].T
+			    normalizer = 1.0 / (2*np.pi)**(a.shape[0]/2) * 1.0 / np.linalg.det(sigma)**(1/2)
+			    return normalizer * np.exp(-(1.0/2)*np.dot(a.T, np.dot(inv(sigma), a)))
+
+			phi = np.array([[1, gbf(xx, (0, 0), 0.2), gbf(xx, (1, 1), 0.2)] for xx in x])
+		\end{verbatim}
+
+		The scatter plot of the new feature space is shown below in figure \ref{scatter_gaussian}.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.6]{exercise_224.pdf}
+			\caption{The IRLS data set in the new feature space, based on $\phi_1$ and $\phi_2$. The color indicates whether a point has class $C_1$ or $C_2$.}
+			\label{scatter_gaussian}
+		\end{figure}
 	\item
+		I did not have to change my algorithm to use the Gaussian basis functions. It worked out of the box after the changes made in the previous exercise. The scatter plot can be found in figure \ref{scatter_gaussian_p}. The figure shows the probability of a data point having class $C_1$. A dark red color indicates a probability of 1 while a white color indicates a probability of 0 (and thus a high probability for $C_2$). A cross entropy error of $346.5$ was achieved, a significant improvement from the dummy basis function.
+
+		The weights that were obtained:
+		\begin{equation}
+			\boldsymbol {\hat w} = \begin{pmatrix}
+										7.10834887\\
+						 				-77.10716735\\
+						 				-77.69154604
+ 								   \end{pmatrix}
+ 		\end{equation}
+
+ 		This result is achieved after a mere 5 iterations. I also tried other iteration counts; $< 5$ iterations gave a higher cross entropy error, while $>= 5$ iterations all had approximately the same error. I tested between $1$ (milliseconds) and $10000$ (20 seconds) iterations.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{exercise_225.pdf}
+			\caption{The probabilities for each data point in the IRLS data set as classified by logistic regression using two Gaussian basis functions. A dark red color indicates a high probability for $C_1$ while a white color indicates a high probability for $C_2$. Probabilities are again scaled, although the effect of the scaling is a lot less than in the previous plot; the unscaled probabilities range from $0.0324$ to $0.999$.}
+			\label{scatter_gaussian_p}
+		\end{figure}
 \end{enumerate}
 
 \end{document}
